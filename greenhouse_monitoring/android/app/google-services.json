@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098012852802",
+    "project_id": "green-house-monitoring-4f6c7",
+    "storage_bucket": "green-house-monitoring-4f6c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098012852802:android:5700614bcb1b412cd023db",
+        "android_client_info": {
+          "package_name": "com.example.greenhouse_monitoring"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMf_3QMVYAdNPYQsV9e-vJDr2VrGjYyZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
