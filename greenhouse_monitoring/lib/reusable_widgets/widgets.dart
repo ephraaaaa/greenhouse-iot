@@ -259,7 +259,14 @@ Widget graphContainer(double screenHeight, screenWidth, Widget widget) {
   );
 }
 
-Widget barChartWidget() {
+Widget barChartWidget(List<dynamic> sensorData) {
+  List<BarChartGroupData> barGroups = [];
+  print("SENSOR DATA: $sensorData");
+  for (int i = 1; i < sensorData.length; i++) {
+    barGroups.add(
+      barData(sensorData[i], i),
+    );
+  }
   return Padding(
     padding: EdgeInsets.only(right: 18, top: 20),
     child: BarChart(
@@ -284,15 +291,7 @@ Widget barChartWidget() {
         borderData: FlBorderData(
           show: true,
         ),
-        barGroups: [
-          barData(40, 1),
-          barData(30, 2),
-          barData(25, 3),
-          barData(35, 4),
-          barData(33, 5),
-          barData(55, 6),
-          barData(24, 7),
-        ],
+        barGroups: barGroups,
       ),
     ),
   );

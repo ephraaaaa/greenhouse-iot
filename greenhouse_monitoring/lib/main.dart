@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 //import 'package:greenhouse_monitoring/screens/navigation_screens/dashboard.dart';
@@ -14,6 +16,8 @@ Future<void> main() async {
           projectId: "green-house-monitoring-4f6c7",
           databaseURL:
               "https://green-house-monitoring-4f6c7-default-rtdb.asia-southeast1.firebasedatabase.app/"));
+  HttpOverrides.global = MyHttpOverrides();
+
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -22,4 +26,13 @@ Future<void> main() async {
       ),
     ),
   );
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
 }

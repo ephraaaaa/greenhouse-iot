@@ -1,10 +1,12 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print, prefer_const_declarations
 
-import 'package:firebase_database/firebase_database.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse_monitoring/reusable_widgets/widgets.dart';
 import 'package:greenhouse_monitoring/screens/navigation_screens/harvest_data.dart';
+import 'package:http/http.dart' as http;
 
 class LogChart extends StatefulWidget {
   const LogChart({super.key});
@@ -14,8 +16,10 @@ class LogChart extends StatefulWidget {
 }
 
 class _LogChartState extends State<LogChart> {
-  late List<double> temperatureData;
-
+  List<double> temperatures = [];
+  List<double> humidities = [];
+  List<double> soilMoisture = [];
+  List<double> lightIntensity = [];
   //Yellow - r203, g166, b79
   //Screen - r245, g240, b229
   //Container - r246, g239, b 223
@@ -26,22 +30,45 @@ class _LogChartState extends State<LogChart> {
     fetchTemperatureData();
   }
 
-  void fetchTemperatureData() {
-    DatabaseReference reference =
-        FirebaseDatabase.instance.ref("weekly-broadcast").child("temperature");
-    reference.onValue.listen((DatabaseEvent event) {
-      if (event.snapshot.value != null) {
-        Map<dynamic, dynamic> data =
-            event.snapshot.value as Map<dynamic, dynamic>;
-        print(data);
-        setState(() {
-          temperatureData =
-              List<double>.from(data.values.map((value) => value.toDouble()));
-        });
+  void fetchTemperatureData() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://greenhousemonitoring.site/server/weekly_broadcast'),
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic data = jsonDecode(response.body);
+        if (data is List<dynamic>) {
+          final List<Map<String, dynamic>> weeklyBroadcast =
+              List<Map<String, dynamic>>.from(data);
+          // Get temperature value for a specific day (e.g., day 2)
+          print(weeklyBroadcast);
+          for (int i = 0; i < weeklyBroadcast.length; i++) {
+            int temperatureOfDay = weeklyBroadcast[i]['temperature'];
+            temperatures.add(temperatureOfDay.toDouble());
+            int humidityOfDay = weeklyBroadcast[i]['humidity'];
+            humidities.add(humidityOfDay.toDouble());
+            int soilMoistureOfDay = weeklyBroadcast[i]['soil-moisture'];
+            soilMoisture.add(soilMoistureOfDay.toDouble());
+            int lightIntensityOfDay = weeklyBroadcast[i]['light-intensity'];
+            lightIntensity.add(lightIntensityOfDay.toDouble());
+          }
+          if (temperatures.isEmpty && humidities.isEmpty) {
+            print("No data");
+          } else {
+            setState(() {});
+            print(temperatures);
+            print(humidities);
+            print(soilMoisture);
+            print(lightIntensity);
+          }
+        } else {
+          print('Failed to fetch data. Status code: ${response.statusCode}');
+        }
       }
-    }, onError: (Object error) {
-      print("Error fetching data: $error");
-    });
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   @override
@@ -72,7 +99,11 @@ class _LogChartState extends State<LogChart> {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  graphContainer(screenHeight, screenWidth, barChartWidget()),
+                  graphContainer(
+                    screenHeight,
+                    screenWidth,
+                    barChartWidget(temperatures),
+                  ),
                   SizedBox(
                     height: screenHeight * 0.05,
                   ),
@@ -83,7 +114,11 @@ class _LogChartState extends State<LogChart> {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  graphContainer(screenHeight, screenWidth, barChartWidget()),
+                  graphContainer(
+                      screenHeight, screenWidth, barChartWidget(humidities)),
+                  SizedBox(
+                    height: screenHeight * 0.05,
+                  ),
                   SizedBox(
                     height: screenHeight * 0.05,
                   ),
@@ -94,7 +129,8 @@ class _LogChartState extends State<LogChart> {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  graphContainer(screenHeight, screenWidth, barChartWidget()),
+                  graphContainer(
+                      screenHeight, screenWidth, barChartWidget(soilMoisture)),
                   SizedBox(
                     height: screenHeight * 0.05,
                   ),
@@ -105,7 +141,8 @@ class _LogChartState extends State<LogChart> {
                   SizedBox(
                     height: screenHeight * 0.02,
                   ),
-                  graphContainer(screenHeight, screenWidth, barChartWidget()),
+                  graphContainer(screenHeight, screenWidth,
+                      barChartWidget(lightIntensity)),
                   SizedBox(
                     height: screenHeight * 0.05,
                   ),

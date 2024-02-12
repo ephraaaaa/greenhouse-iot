@@ -255,11 +255,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(
                         height: screenHeight * 0.01,
                       ),
-                      reusableButton(
-                        buttonHeight,
-                        textFormFieldWith,
-                        "EDIT PROFILE",
-                        _editProfile,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20, top: 10),
+                        child: reusableButton(
+                          buttonHeight,
+                          textFormFieldWith,
+                          "EDIT PROFILE",
+                          _editProfile,
+                        ),
                       )
                     ],
                   ),

@@ -111,7 +111,7 @@ class _HarvestPageState extends State<HarvestPage> {
                                 isCurved: true,
                                 belowBarData: BarAreaData(
                                   show: true,
-                                  color: Colors.blue.withOpacity(.6),
+                                  color: Colors.green.withOpacity(.6),
                                 ),
                               ),
                             ],
@@ -126,13 +126,16 @@ class _HarvestPageState extends State<HarvestPage> {
                 SizedBox(
                   height: screenHeight * 0.05,
                 ),
-                reusableButton(
-                  screenHeight * 0.05,
-                  screenWidth * 0.7,
-                  "Go back",
-                  () {
-                    Navigator.pop(context);
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: reusableButton(
+                    screenHeight * 0.05,
+                    screenWidth * 0.7,
+                    "Go back",
+                    () {
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
               ],
             ),
