@@ -94,12 +94,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               TextField(
                 controller: _displayFailedHarvestCrops,
-                decoration: InputDecoration(labelText: 'Failed harvest crops'),
+                decoration: InputDecoration(
+                    labelText: 'Failed harvest crops(in kilos)'),
               ),
               TextField(
                 controller: _displaySuccessfulHarvestCrops,
-                decoration:
-                    InputDecoration(labelText: 'Successful harvest crops'),
+                decoration: InputDecoration(
+                    labelText: 'Successful harvest crops(in kilos)'),
               ),
             ],
           ),

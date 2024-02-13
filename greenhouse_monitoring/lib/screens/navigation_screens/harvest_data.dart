@@ -1,5 +1,9 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:greenhouse_monitoring/reusable_widgets/widgets.dart';
@@ -13,9 +17,70 @@ class HarvestPage extends StatefulWidget {
 
 int touchedIndex = -1;
 
+// Generate a random integer between 0 and 100
+
 class _HarvestPageState extends State<HarvestPage> {
+  late User? _user;
+  String _failedHarvestCount = "";
+  String _successfulHarvestCount = "";
+  double success = 0;
+  double fail = 0;
+  Future<void> _initializeUser() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+
+    if (user != null) {
+      setState(() {
+        _user = user;
+      });
+
+      _loadUserName();
+    }
+  }
+
+  Future<void> _loadUserName() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentSnapshot userDoc =
+        await firestore.collection('users').doc(_user!.uid).get();
+
+    if (userDoc.exists) {
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      print("Userdata: $userData");
+      setState(() {
+        _successfulHarvestCount = userData['displaySuccessfulHarvest'] ?? '';
+        _failedHarvestCount = userData['displayFailedHarvest'] ?? '';
+        print("Success: $_successfulHarvestCount");
+        print("Failed: $_failedHarvestCount");
+        success = double.parse(_successfulHarvestCount);
+        fail = double.parse(_failedHarvestCount);
+      });
+    } else {
+      print("Could not fetch data");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUser();
+  }
+
   @override
   Widget build(BuildContext context) {
+    var random = Random();
+
+    DateTime now = DateTime.now();
+    int currentMonth = now.month;
+    List<FlSpot> spots = [];
+
+    for (int i = 0; i <= currentMonth; i++) {
+      int randomNumber = random.nextInt(101);
+
+      spots.add(
+        FlSpot(i.toDouble(), (100 + randomNumber).toDouble()),
+      );
+    }
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -59,7 +124,7 @@ class _HarvestPageState extends State<HarvestPage> {
                       SizedBox(
                         height: screenHeight * 0.15,
                       ),
-                      pieChart(screenWidth, screenHeight, 34.5, 65.5),
+                      pieChart(screenWidth, screenHeight, fail, success),
                       SizedBox(
                         height: screenHeight * 0.15,
                       ),
@@ -94,20 +159,7 @@ class _HarvestPageState extends State<HarvestPage> {
                           LineChartData(
                             lineBarsData: [
                               LineChartBarData(
-                                spots: const [
-                                  FlSpot(1, 120),
-                                  FlSpot(2, 300),
-                                  FlSpot(3, 120),
-                                  FlSpot(4, 90),
-                                  FlSpot(5, 110),
-                                  FlSpot(6, 150),
-                                  FlSpot(7, 140),
-                                  FlSpot(8, 220),
-                                  FlSpot(9, 120),
-                                  FlSpot(10, 320),
-                                  FlSpot(11, 420),
-                                  FlSpot(12, 320),
-                                ],
+                                spots: spots,
                                 isCurved: true,
                                 belowBarData: BarAreaData(
                                   show: true,
