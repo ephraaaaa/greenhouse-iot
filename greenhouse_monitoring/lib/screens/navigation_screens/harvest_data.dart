@@ -17,8 +17,6 @@ class HarvestPage extends StatefulWidget {
 
 int touchedIndex = -1;
 
-// Generate a random integer between 0 and 100
-
 class _HarvestPageState extends State<HarvestPage> {
   late User? _user;
   String _failedHarvestCount = "";
@@ -106,10 +104,10 @@ class _HarvestPageState extends State<HarvestPage> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(1), // Shadow color
-                        spreadRadius: 5, // Spread radius
-                        blurRadius: 7, // Blur radius
-                        offset: Offset(0, 2), // Offset in the x, y direction
+                        color: Colors.grey.withOpacity(1),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 2),
                       ),
                     ],
                     color: Color.fromRGBO(230, 205, 148, 1),

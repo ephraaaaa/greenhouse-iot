@@ -4,10 +4,12 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse_monitoring/reusable_widgets/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -20,7 +22,13 @@ class DashboardScreen extends StatefulWidget {
 //Container - r246, g239, b 223
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final DatabaseReference _openRoofRef =
+      FirebaseDatabase.instance.ref().child('open_roof');
+
+  bool _switchValue = false;
+
   late User? _user;
+
   String _greetingName = "";
   String _harvestCount = "";
   String getGreeting() {
@@ -34,6 +42,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } else {
       return 'Good evening,';
     }
+  }
+
+  void sendDataToFirebase() {
+    _openRoofRef.set({'toggle': _switchValue}).then((_) {
+      print('Data sent successfully.');
+    }).catchError((error) {
+      print('Failed to send data: $error');
+    });
   }
 
   @override
@@ -173,6 +189,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SizedBox(
                 height: screenHeight * 0.02,
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    children: <Widget>[
+                      reusableText("OPEN ROOF", 15, Colors.black),
+                      CupertinoSwitch(
+                        value: _switchValue,
+                        onChanged: ((value) {
+                          setState(
+                            () {
+                              _switchValue = value;
+                              sendDataToFirebase();
+                              print(_switchValue);
+                            },
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Container(
                 height: screenHeight * 0.55,
                 width: screenWidth * 0.95,
@@ -261,8 +300,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _initializeUser() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
 
+    User? user = auth.currentUser;
     if (user != null) {
       setState(() {
         _user = user;

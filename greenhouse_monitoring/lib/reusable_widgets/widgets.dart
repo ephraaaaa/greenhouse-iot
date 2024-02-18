@@ -262,7 +262,7 @@ Widget graphContainer(double screenHeight, screenWidth, Widget widget) {
 Widget barChartWidget(List<dynamic> sensorData) {
   List<BarChartGroupData> barGroups = [];
   print("SENSOR DATA: $sensorData");
-  for (int i = 1; i < sensorData.length; i++) {
+  for (int i = 0; i < sensorData.length; i++) {
     barGroups.add(
       barData(sensorData[i], i),
     );
