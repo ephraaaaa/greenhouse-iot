@@ -11,8 +11,8 @@
 #define USER_PASSWORD "arduinoproject1"
 #define RAIN_SENSOR_PIN 4
 #ifndef STASSID
-#define STASSID "Ephra" 
-#define STAPSK "myAcccount3"// replace with your own wifi credentials
+#define STASSID "Godiswithyou!" 
+#define STAPSK "12345678"
 #endif
 const char* ssid = STASSID;
 const char* password = STAPSK;
@@ -55,40 +55,29 @@ void setup() {
 
 void loop() {
 
-  
-  
   int temperature = random(27, 33);
   int humidity = random(45, 57);
   int soilMoisture = random(50, 60);  
   int lightIntensity = random(0, 100);
   int sensorValue = analogRead(RAIN_SENSOR_PIN);
   float percentage = map(sensorValue, 0, 1023, 0, 100);
-  
-  // Print the percentage to the serial monitor
-  Serial.print("Rain percentage: ");
-  Serial.print(percentage);
-  Serial.println("%");
-  
-  // Determine if it's raining based on the percentage
-  if (percentage > 50) {
-    Serial.println("It's raining!");
-  } else {
-    Serial.println("It's not raining.");
-  }
+ 
   if(WiFi.status() != WL_CONNECTED){
       Serial.println("Not connected restart device.");
-      ESP.restart();
+      if (percentage > 50) {
+        Serial.println("CLOSE");
+        }
     }
+  
   else{
   HTTPClient http;
-  http.begin(serverUrl); // Specify the URL
-  int httpResponseCode = http.GET(); // Make the request
+  http.begin(serverUrl); 
+  int httpResponseCode = http.GET(); 
   if (httpResponseCode > 0) {
-    String payload = http.getString(); // Get the response payload
+    String payload = http.getString();
     if (payload != previousPayload) {
       Serial.println(payload);
-      previousPayload = payload; // Update the previous payload
-      // Do something with the changed payload here
+      previousPayload = payload; 
     }
   } else {
     Serial.print("Error code: ");
@@ -106,16 +95,9 @@ void loop() {
    realTimeUpdate(temperature, humidity, soilMoisture, lightIntensity);
    weeklyBroadcast(dayOfWeekStr, temperature, humidity, soilMoisture, lightIntensity);
    delay(1000);
-
-    
-    
-   
     }
  
 }
-
-
-
 
 
 void realTimeUpdate(int temperature, int humidity, int soilMoisture, int lightIntensity){
@@ -124,7 +106,7 @@ void realTimeUpdate(int temperature, int humidity, int soilMoisture, int lightIn
   Firebase.RTDB.setInt(&fbdo,"real-time/humidity", humidity)&&
   Firebase.RTDB.setInt(&fbdo,"real-time/soil-moisture", soilMoisture)&&
   Firebase.RTDB.setInt(&fbdo,"real-time/light-intensity", lightIntensity)){
-    Serial.println("Data uploaded. -- Real-time");
+
     }
   else{
     Serial.println("Uploading error. -- Real-time");
@@ -136,9 +118,9 @@ void weeklyBroadcast(String dayOfWeekStr, int temperature, int humidity, int soi
   Firebase.RTDB.setInt(&fbdo,"weekly_broadcast/"+dayOfWeekStr+"/humidity", humidity)&&
   Firebase.RTDB.setInt(&fbdo,"weekly_broadcast/"+dayOfWeekStr+"/soil-moisture", soilMoisture)&&
   Firebase.RTDB.setInt(&fbdo,"weekly_broadcast/"+dayOfWeekStr+"/light-intensity", lightIntensity)){
-    Serial.println("Data uploaded. -- Weekly");
+   
     }
   else{ 
-    Serial.println("Uploading error. -- Weekly");
+   
     }
   }
