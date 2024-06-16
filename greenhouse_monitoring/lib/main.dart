@@ -16,6 +16,7 @@ Future<void> main() async {
           projectId: "green-house-monitoring-4f6c7",
           databaseURL:
               "https://green-house-monitoring-4f6c7-default-rtdb.asia-southeast1.firebasedatabase.app/"));
+
   HttpOverrides.global = MyHttpOverrides();
 
   runApp(

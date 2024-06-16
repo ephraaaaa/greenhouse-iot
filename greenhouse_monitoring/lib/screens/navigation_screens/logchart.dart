@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:greenhouse_monitoring/reusable_widgets/widgets.dart';
+import 'package:greenhouse_monitoring/screens/navigation_screens/data_archive.dart';
 import 'package:greenhouse_monitoring/screens/navigation_screens/harvest_data.dart';
 import 'package:http/http.dart' as http;
 
@@ -146,16 +147,33 @@ class _LogChartState extends State<LogChart> {
                   SizedBox(
                     height: screenHeight * 0.05,
                   ),
-                  reusableButton(
-                    screenHeight * 0.05,
-                    screenWidth * 0.7,
-                    "Go to harvest",
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HarvestPage()),
-                      );
-                    },
+                  Row(
+                    children: [
+                      reusableButton(
+                        screenHeight * 0.05,
+                        screenWidth * 0.35,
+                        "Harvest",
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HarvestPage()),
+                          );
+                        },
+                      ),
+                      reusableButton(
+                        screenHeight * 0.05,
+                        screenWidth * 0.35,
+                        "Data archive",
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DataArchive()),
+                          );
+                        },
+                      ),
+                    ],
                   )
                 ],
               ),
